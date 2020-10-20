@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Android File Transfer</string>
+    <string name="enable_button">Enable</string>
+    <string name="discover_button">Discover</string>
+</resources>
