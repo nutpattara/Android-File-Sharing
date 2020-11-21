@@ -11,9 +11,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="14dp"
-        android:layout_marginRight="14dp"
-        android:layout_marginBottom="9dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="12dp"
         android:text="@string/enable_button"
         app:layout_constraintBottom_toTopOf="@+id/wifi_status_text_view"
         app:layout_constraintEnd_toStartOf="@+id/discover_button"
@@ -22,28 +22,45 @@
 
     <Button
         android:id="@+id/discover_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="154dp"
+        android:layout_height="48dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="121dp"
-        android:layout_marginRight="121dp"
-        android:layout_marginBottom="9dp"
+        android:layout_marginEnd="95dp"
+        android:layout_marginRight="95dp"
+        android:layout_marginBottom="79dp"
         android:text="@string/discover_button"
-        app:layout_constraintBottom_toTopOf="@+id/wifi_status_text_view"
+        app:layout_constraintBottom_toTopOf="@+id/peer_list_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/enable_button"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ListView
+        android:id="@+id/peer_list_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginLeft="9dp"
+        android:layout_marginEnd="9dp"
+        android:layout_marginRight="9dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/discover_button" />
+
     <TextView
         android:id="@+id/wifi_status_text_view"
-        android:layout_width="183dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginBottom="623dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="19dp"
         android:text="OFF"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/peer_list_view"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/discover_button" />
+        app:layout_constraintTop_toBottomOf="@+id/enable_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
