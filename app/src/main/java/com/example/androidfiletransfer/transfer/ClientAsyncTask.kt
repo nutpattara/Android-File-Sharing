@@ -26,13 +26,12 @@ class ClientAsyncTask(private val context: Context, private val address: String)
         while (uri != null){
             pendingFile = getFileName(uri)
             publishProgress()
-            sendFileNew(uri)
-            Thread.sleep(1000)
+            sendFile(uri)
             uri = activity.uriManager.pop()
         }
+        Thread.sleep(1000)
         sendDone()
-        activity.disconnect()
-        return "Sent file successful!"
+        return "Sent file successful! Please wait for other device to be done"
     }
 
     override fun onPostExecute(result: String) {
@@ -67,30 +66,8 @@ class ClientAsyncTask(private val context: Context, private val address: String)
         return result
     }
 
-//    private fun sendInfo(uri: Uri): Boolean{
-//        val message = "SEND:" + getFileName(uri) + "\n"
-//        val activity = context as MainActivity
-//        val MAX_TRIES = 20
-//        var tries = 0
-//        while (true) {
-//            try {
-//                val socket: Socket = Socket()
-//                socket.connect(InetSocketAddress(address, 8885), 10000)
-//                val outputStream = socket.getOutputStream()
-//                outputStream.write(message.toByteArray())
-//                outputStream.close()
-//                socket.close()
-//                return true
-//            } catch (e: IOException) {
-//                Thread.sleep(500)
-//                tries += 1
-//                if (tries == MAX_TRIES) return false
-//            }
-//        }
-//    }
-
     private fun sendDone(): Boolean{
-        val message = "THIS_IS_THE_LAST_FILE"
+        val message = "FIN:NOTHING"
         val MAX_TRIES = 20
         var tries = 0
         while (true) {
@@ -111,30 +88,8 @@ class ClientAsyncTask(private val context: Context, private val address: String)
         }
     }
 
-//    @ExperimentalStdlibApi
-//    private fun sendFile(uri: Uri): Boolean{
-//        val MAX_TRIES = 30
-//        var tries = 0
-//        while (true) {
-//            try {
-//                val client: Socket = Socket()
-//                client.connect(InetSocketAddress(address, 8885), 10000)
-//                val clientOutputStream = client.getOutputStream()
-//                val f = context.getContentResolver().openInputStream(uri)
-//                f!!.copyTo(clientOutputStream)
-//                clientOutputStream.close()
-//                client.close()
-//                return true
-//            } catch (e: IOException) {
-//                Thread.sleep(500)
-//                tries += 1
-//                if (tries == MAX_TRIES) return false
-//            }
-//        }
-//    }
-
     @ExperimentalStdlibApi
-    private fun sendFileNew(uri: Uri): String{
+    private fun sendFile(uri: Uri): String{
         val MAX_TRIES = 20
         var tries = 0
         val fileName = getFileName(uri)
@@ -144,9 +99,10 @@ class ClientAsyncTask(private val context: Context, private val address: String)
                 client.connect(InetSocketAddress(address, 8885), 10000)
                 val clientOutputStream = BufferedOutputStream(client.getOutputStream())
                 DataOutputStream(clientOutputStream).use { d ->
-                    d.writeUTF(fileName)
+                    d.writeUTF("SEN:" + fileName)
                     val f = context.getContentResolver().openInputStream(uri)
                     f!!.copyTo(d)
+                    Thread.sleep(1000)
                 }
                 client.close()
                 return fileName
