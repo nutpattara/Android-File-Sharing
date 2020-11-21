@@ -6,6 +6,10 @@ class UriManager {
 
     private var uris = ArrayList<Uri>()
 
+    fun clear(){
+        uris.clear()
+    }
+
     fun addUri(uri: Uri?){
         if (uri != null){
             uris.add(uri)

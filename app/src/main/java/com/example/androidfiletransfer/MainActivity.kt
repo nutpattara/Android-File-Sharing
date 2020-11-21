@@ -20,7 +20,6 @@ import com.example.androidfiletransfer.transfer.UriManager
 import com.example.androidfiletransfer.view.PeersListAdaptor
 import kotlin.collections.ArrayList
 
-// TODO Reset botton
 class MainActivity : AppCompatActivity() {
     private val CHOOSE_FILE_REQUEST_CODE = 111
 
@@ -68,7 +67,6 @@ class MainActivity : AppCompatActivity() {
             addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION)
         }
 
-        // TODO
         setWifiText("Please turn on location & wifi for this app")
         val uploadButton: Button = findViewById(R.id.enable_button)
         uploadButton.setOnClickListener {
@@ -83,8 +81,6 @@ class MainActivity : AppCompatActivity() {
             manager.discoverPeers(channel, object : WifiP2pManager.ActionListener {
 
                 override fun onSuccess() {
-                    // The onSuccess() method only notifies you that the discovery process succeeded
-                    // and does not provide any information about the actual peers that it discovered, if any
                     setWifiText("Finding other user...")
                 }
 
@@ -93,12 +89,13 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
-        //
+        val resetButton: Button = findViewById(R.id.reset_button)
+        resetButton.setOnClickListener {
+            resetScreen()
+        }
 
         manager = getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
         channel = manager.initialize(this, mainLooper, null)
-
-        //
 
         listView = findViewById(R.id.peer_list_view)
         val adaptor = PeersListAdaptor(this, peers)
@@ -121,14 +118,12 @@ class MainActivity : AppCompatActivity() {
         unregisterReceiver(receiver)
     }
 
-    // TODO
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CHOOSE_FILE_REQUEST_CODE && resultCode == RESULT_OK) {
             if (data != null){
                 val dataClipData = data.clipData
                 if (dataClipData != null){
-                    // TODO for testing
                     var allUri = ""
                     for (i in 0 until dataClipData.itemCount){
                         val uri = dataClipData.getItemAt(i).uri
@@ -174,11 +169,22 @@ class MainActivity : AppCompatActivity() {
     fun disconnect(){
         manager.removeGroup(channel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
+                Toast.makeText(
+                        this@MainActivity,
+                        "Disconnected from group",
+                        Toast.LENGTH_SHORT
+                ).show()
             }
 
             override fun onFailure(reasonCode: Int) {
             }
         })
+    }
+
+    fun resetScreen(){
+        disconnect()
+        setWifiText("Please turn on location & wifi for this app")
+        uriManager.clear()
     }
 
     private fun updatePeerListChanged(){
