@@ -14,11 +14,15 @@ import java.nio.file.Paths
 
 class FileServerAsyncTask(private val context: Context) : AsyncTask<Void, Void, String>() {
 
+    var pendingFile: String = ""
+
     override fun doInBackground(vararg params: Void?): String {
         val activity = context as MainActivity
         var info: Array<String> = emptyArray()
         while (true) {
-            recvFileNew()
+            if (!recvFileNew()){
+                break
+            }
         }
         activity.disconnect()
         return "DONE"
@@ -42,6 +46,11 @@ class FileServerAsyncTask(private val context: Context) : AsyncTask<Void, Void, 
     override fun onPostExecute(result: String) {
         val activity = context as MainActivity
         activity.setWifiText("Recv: \"$result\"")
+    }
+
+    override fun onProgressUpdate(vararg values: Void?) {
+        val activity = context as MainActivity
+        activity.setWifiText("Downloading $pendingFile")
     }
 
 //    private fun recvInfo(): Array<String> {
@@ -90,21 +99,24 @@ class FileServerAsyncTask(private val context: Context) : AsyncTask<Void, Void, 
             val serverSocket = ServerSocket(8885)
             val client = serverSocket.accept()
             val dir = context.getExternalFilesDir("adhocAndroid")
+            var flag = false
             if (!dir!!.exists()) dir.mkdirs()
             val clientInputStream = BufferedInputStream(client.getInputStream())
             DataInputStream(clientInputStream).use { d ->
                 val fileName = d.readUTF()
-                if (!fileName.equals("THIS_IS_THE_LAST_FILE")){
-                    val f = File(dir, fileName)
+                if (fileName.indexOf("THIS_IS_THE_LAST_FILE") == -1){
+                    pendingFile = fileName
+                    publishProgress()
+                    val saveName = "share-file-" + System.currentTimeMillis() + fileName
+                    val f = File(dir, saveName)
                     val fOutputStream = FileOutputStream(f)
                     clientInputStream.copyTo(fOutputStream)
                     fOutputStream.close()
-                    client.close()
-                    return true
+                    flag = true
                 }
             }
             client.close()
-            return false
+            return flag
         } catch (e: Exception) {
             return false
         }

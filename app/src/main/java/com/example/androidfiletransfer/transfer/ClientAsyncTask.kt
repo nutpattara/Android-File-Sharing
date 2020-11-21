@@ -17,34 +17,20 @@ import java.nio.file.Files
 
 class ClientAsyncTask(private val context: Context, private val address: String) : AsyncTask<Void, Void, String>() {
 
-    // TODO
-//    @ExperimentalStdlibApi
-//    override fun doInBackground(vararg params: Void?): String {
-//        val activity = context as MainActivity
-//        var uri: Uri? = activity.uriManager.pop()
-//        while (uri != null){
-//            if (sendInfo(uri)){
-//                if (sendFile(uri)){
-//                    uri = activity.uriManager.pop()
-//                }
-//            } else {
-//                uri = activity.uriManager.pop()
-//            }
-//        }
-//        sendDone()
-//        activity.disconnect()
-//        return "Sent file successful!"
-//    }
+    var pendingFile: String = ""
 
     @ExperimentalStdlibApi
     override fun doInBackground(vararg params: Void?): String {
         val activity = context as MainActivity
         var uri: Uri? = activity.uriManager.pop()
         while (uri != null){
+            pendingFile = getFileName(uri)
+            publishProgress()
             sendFileNew(uri)
+            Thread.sleep(1000)
             uri = activity.uriManager.pop()
         }
-        //sendDone()
+        sendDone()
         activity.disconnect()
         return "Sent file successful!"
     }
@@ -52,6 +38,11 @@ class ClientAsyncTask(private val context: Context, private val address: String)
     override fun onPostExecute(result: String) {
         val activity = context as MainActivity
         activity.setWifiText(result)
+    }
+
+    override fun onProgressUpdate(vararg values: Void?) {
+        val activity = context as MainActivity
+        activity.setWifiText("Sending $pendingFile")
     }
 
     private fun getFileName(uri: Uri): String{
